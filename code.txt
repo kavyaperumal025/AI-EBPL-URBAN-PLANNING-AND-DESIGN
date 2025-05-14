@@ -1,0 +1,34 @@
+import pandas as pd
+# Sample urban planning dataset
+data = {
+'area_id': [101, 102, 103, 104, 105],
+'population_density': [1200, 800, 3000, 1500, 400],
+'road_access_score': [8, 5, 12, 7, 3],
+'public_services_score': [7, 4, 9, 6, 2],
+'current_land_use': ['residential', 'agricultural', 'commercial', 'residential', 'agricultural']
+}
+# Load into pandas DataFrame
+df = pd.DataFrame(data)
+# Display dataset
+print("Urban Area Dataset:\n")
+print(df)
+# Filter: Areas with high population density needing public service upgrades
+print("\n[Analysis] High density areas with low public service score:\n")
+filtered = df[(df['population_density'] > 1000) & (df['public_services_score'] < 6)]
+print(filtered[['area_id', 'population_density', 'public_services_score']])
+# Group by land use type to get average infrastructure score
+df['infra_score_avg'] = (df['road_access_score'] + df['public_services_score']) / 2
+print("\n[Insight] Average Infrastructure Score by Land Use Type:\n")
+grouped = df.groupby('current_land_use')['infra_score_avg'].mean()
+print(grouped)
+# Recommend development zones based on conditions
+def recommend_development(row):
+if row['population_density'] > 2000 and row['road_access_score'] > 10:
+return 'High-priority commercial zone'
+elif row['current_land_use'] == 'agricultural' and row['road_access_score'] < 5:
+return 'Low development priority'
+else:
+return 'Moderate priority'
+df['development_recommendation'] = df.apply(recommend_development, axis=1)
+print("\n[Recommendation] Development Plan Suggestions:\n")
+print(df[['area_id', 'current_land_use', 'development_recommendation']])
